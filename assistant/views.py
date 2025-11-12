@@ -61,7 +61,11 @@ def chat_api(request):
     except json.JSONDecodeError:
         return JsonResponse({'error': 'JSON inválido'}, status=400)
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        # Log the error for debugging but don't expose stack trace to users
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Error processing chat message: {e}", exc_info=True)
+        return JsonResponse({'error': 'Erro ao processar mensagem'}, status=500)
 
 
 def get_history(request):
